@@ -33,12 +33,14 @@ coldata_save <- function(sce, path, filename="coldata", coldata_column_prefix=pa
 #'
 #' @importFrom SingleCellExperiment colData mainExpName
 #' @export
-coldata_load <- function(sce, path, filename="coldata", coldata_column_prefix=paste0(mainExpName(sce),"_")){
+coldata_load <- function(sce=NULL, path, filename="coldata", coldata_column_prefix=paste0(mainExpName(sce),"_")){
   df <- multisce_individual_load(path=path, filename=filename)
-  df_existing <- colData(sce)
-  if(ncol(df_existing)>0){
-    colnames(df_existing) <- paste0(coldata_column_prefix, colnames(df_existing))
-    df <- cbind(df_existing, df)
+  if(!is.null(sce)){
+    df_existing <- colData(sce)
+    if(ncol(df_existing)>0){
+      colnames(df_existing) <- paste0(coldata_column_prefix, colnames(df_existing))
+      df <- cbind(df_existing, df)
+    }
   }
 
   return(df)

@@ -6,7 +6,7 @@
 \usage{
 altexp_save(
   altExpName,
-  sce,
+  altexp,
   path,
   rownames_strip_prefix = TRUE,
   rownames_prefix_sep = "_"
@@ -15,7 +15,7 @@ altexp_save(
 \arguments{
 \item{altExpName}{Name of altExp to be saved}
 
-\item{sce}{SingleCellExperiment object}
+\item{altexp}{SingleCellExperiment object}
 
 \item{path}{Path to multisce folder for the object}
 

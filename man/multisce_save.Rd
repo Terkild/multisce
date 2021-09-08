@@ -14,7 +14,9 @@ multisce_save(
   reduceddim_exclude = c(),
   rownames_strip_prefix = TRUE,
   rownames_prefix_sep = "_",
-  main_prefix = paste0(main_name, "__")
+  main_prefix = paste0(main_name, "__"),
+  metadata_include = "all",
+  metadata_exclude = c("multisce_path")
 )
 }
 \arguments{
@@ -37,6 +39,10 @@ multisce_save(
 \item{rownames_prefix_sep}{Separator used for pasting rownames prefix}
 
 \item{main_prefix}{Names with this prefix are omitted when saving the colData and reducedDims separately but included in the colData of the saved main SCE}
+
+\item{metadata_include}{If "all", all metadata entries are saved (unless specified in metadata_exclude). Otherwise, a vector of metadata entry names to be saved}
+
+\item{metadata_exclude}{Vector of metadata entry names to exclude from being saved}
 }
 \description{
 Saves the main SCE and its connected alternative experiments (altExp) into

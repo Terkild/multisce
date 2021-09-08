@@ -35,20 +35,19 @@ sce_list <- function(path, folder="sce", extension=".rds"){
 #' Save individual altExp
 #'
 #' @param altExpName  Name of altExp to be saved
-#' @param sce SingleCellExperiment object
+#' @param altexp SingleCellExperiment object
 #' @param path Path to multisce folder for the object
 #' @param rownames_strip_prefix Should rowname prefix (altExp name) be stripped before saving?
 #' @param rownames_prefix_sep Separator used for pasting rownames prefix
 #'
 #' @importFrom SingleCellExperiment altExp
 #' @export
-altexp_save <- function(altExpName, sce, path, rownames_strip_prefix=TRUE, rownames_prefix_sep="_"){
-  current_sce <- altExp(sce, altExpName)
+altexp_save <- function(altExpName, altexp, path, rownames_strip_prefix=TRUE, rownames_prefix_sep="_"){
 
   ## Remove rowname prefix if required
-  if(rownames_strip_prefix == TRUE) rownames(current_sce) <- gsub(paste0("^",altExpName,rownames_prefix_sep),"", rownames(current_sce))
+  if(rownames_strip_prefix == TRUE) rownames(altexp) <- gsub(paste0("^",altExpName,rownames_prefix_sep),"", rownames(altexp))
 
-  sce_save(current_sce, path=path, filename=altExpName)
+  sce_save(altexp, path=path, filename=altExpName)
 }
 
 #' Load individual altExp

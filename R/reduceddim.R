@@ -1,15 +1,14 @@
 #' Save individual reducedDim
 #'
 #' @param reducedDimName  Name of reducedDim to be saved
-#' @param sce SingleCellExperiment object
+#' @param reduceddim reducedDim object
 #' @param path Path to multisce folder for the object
 #' @param folder Subfolder to use for reducedDim objects
 #'
 #' @export
-reduceddim_save <- function(reducedDimName, sce, path, folder="reducedDim"){
-  current_dimred <- reducedDim(sce, reducedDimName)
+reduceddim_save <- function(reducedDimName, reduceddim, path, folder="reducedDim"){
 
-  multisce_individual_save(current_dimred, path=file.path(path, folder), filename=reducedDimName)
+  multisce_individual_save(reduceddim, path=file.path(path, folder), filename=reducedDimName)
 }
 
 #' Load individual reducedDim
@@ -20,9 +19,9 @@ reduceddim_save <- function(reducedDimName, sce, path, folder="reducedDim"){
 #'
 #' @export
 reduceddim_load <- function(reducedDimName, path, folder="reducedDim"){
-  current_dimred <- multisce_individual_load(path=file.path(path, folder), filename=reducedDimName)
+  reduceddim <- multisce_individual_load(path=file.path(path, folder), filename=reducedDimName)
 
-  return(current_dimred)
+  return(reduceddim)
 }
 
 #' List available reducedDims

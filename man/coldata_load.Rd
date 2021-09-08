@@ -5,7 +5,7 @@
 \title{Load column data}
 \usage{
 coldata_load(
-  sce,
+  sce = NULL,
   path,
   filename = "coldata",
   coldata_column_prefix = paste0(mainExpName(sce), "_")

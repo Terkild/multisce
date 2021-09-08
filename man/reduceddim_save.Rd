@@ -4,12 +4,12 @@
 \alias{reduceddim_save}
 \title{Save individual reducedDim}
 \usage{
-reduceddim_save(reducedDimName, sce, path, folder = "reducedDim")
+reduceddim_save(reducedDimName, reduceddim, path, folder = "reducedDim")
 }
 \arguments{
 \item{reducedDimName}{Name of reducedDim to be saved}
 
-\item{sce}{SingleCellExperiment object}
+\item{reduceddim}{reducedDim object}
 
 \item{path}{Path to multisce folder for the object}
 
