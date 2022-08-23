@@ -11,7 +11,7 @@
 #'
 #' @importFrom SingleCellExperiment colData mainExpName
 #' @export
-coldata_save <- function(sce, path, filename="coldata", coldata_column_prefix=paste0(mainExpName(sce),"_")){
+coldata_save <- function(sce, path=multisce_path(sce), filename="coldata", coldata_column_prefix=paste0(mainExpName(sce),"_")){
   df <- colData(sce)
   columns_skip <- grepl(paste0("^", coldata_column_prefix), colnames(df))
 

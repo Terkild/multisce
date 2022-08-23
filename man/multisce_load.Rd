@@ -15,7 +15,7 @@ multisce_load(
   altexp_rownames_prefix_sep = "_",
   reduceddim_include = "all",
   reduceddim_exclude = c(),
-  metadata_include = "all",
+  metadata_include = c(),
   metadata_exclude = c()
 )
 }

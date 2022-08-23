@@ -7,7 +7,7 @@
 #'
 #' @export
 metadata_entry_save <- function(entry_name, entry, path, folder="metadata"){
-  multisce_individual_save(entry, path=file.path(path, folder), filename=entry_name)
+  if(!is.na(entry_name) & length(entry)>0)  multisce_individual_save(entry, path=file.path(path, folder), filename=entry_name)
 }
 
 #' Load individual metadata entries
@@ -20,7 +20,7 @@ metadata_entry_save <- function(entry_name, entry, path, folder="metadata"){
 #'
 #' @export
 metadata_entry_load <- function(entry_name, path, folder="metadata"){
-  entry <- multisce_individual_load(path=file.path(path, folder), filename=reducedDimName)
+  entry <- multisce_individual_load(path=file.path(path, folder), filename=entry_name)
 
   return(entry)
 }
@@ -46,19 +46,23 @@ metadata_list <- function(path, folder="metadata", extension=".rds"){
 #'
 #' @return List of metadata entries excluded from being saved
 #'
-#' @importFrom furrr future_iwalk
+#' @importFrom purrr iwalk
 #' @export
 metadata_save <- function(sce, path=multisce_path(sce), metadata_include="all", metadata_exclude=c("multisce_path")){
   metadata <- metadata(sce)
 
   if(length(metadata) >0){
     metadata_names <- names(metadata)
-    if(metadata_include != "all") metadata_include <- intersect(metadata_names, metadata_include)
-    metadata_include <- setdiff(metadata_include, metadata_exclude)
 
-    if(length(metadata_include) > 0) furrr::future_iwalk(metadata[metadata_include], ~ metadata_entry_save(entry_name=.y, entry=.x, path=path))
+    if("all" %in% metadata_include) metadata_names <- intersect(metadata_names, metadata_include)
 
-    if(length(metadata_exclude) > 0) return(metadata[metadata_exclude])
+    metadata_names <- setdiff(metadata_names, metadata_exclude)
+
+    if(length(metadata_names) > 0){
+      purrr::iwalk(metadata[metadata_names], ~ metadata_entry_save(entry_name=.y, entry=.x, path=path))
+
+      return(metadata[metadata_exclude])
+    }
   }
 }
 
@@ -73,7 +77,7 @@ metadata_save <- function(sce, path=multisce_path(sce), metadata_include="all", 
 metadata_load <- function(path, metadata_include="all", metadata_exclude=c("multisce_path")){
 
   if(length(metadata_include) > 0){
-    if(metadata_include == "all") metadata_include <- metadata_list(path)
+    if("all" %in% metadata_include) metadata_include <- metadata_list(path)
     metadata_include <- setdiff(metadata_include, metadata_exclude) %>% setNames(., .)
 
     if(length(metadata_include) > 0){

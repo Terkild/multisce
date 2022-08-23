@@ -17,7 +17,7 @@
 #' @param main_prefix Names with this prefix are omitted when saving the colData and reducedDims separately but included in the colData of the saved main SCE
 #'
 #' @importFrom SingleCellExperiment altExps altExpNames colData mainExpName
-#' @importFrom furrr future_walk
+#' @importFrom purrr walk
 #' @importFrom S4Vectors metadata
 #' @export
 multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName(sce), altexp_include="all", altexp_exclude=c(), reduceddim_include="all", reduceddim_exclude=c(), rownames_strip_prefix=TRUE, rownames_prefix_sep="_", main_prefix=paste0(main_name,"__"), metadata_include="all", metadata_exclude=c("multisce_path")){
@@ -25,20 +25,20 @@ multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName
   ### altExp ###
   ## Save altExps individually
   altexp_names <- altExpNames(sce)
-  if(altexp_include != "all") altexp_names <- intersect(altexp_names, altexp_include)
+  if(!"all" %in% altexp_include) altexp_names <- intersect(altexp_names, altexp_include)
   altexp_names <- setdiff(altexp_names, altexp_exclude)
 
-  furrr::future_walk(altexp_names, ~ altexp_save(.x, altexp=altExp(sce, .x), path=path, rownames_strip_prefix=rownames_strip_prefix, rownames_prefix_sep=rownames_prefix_sep))
+  walk(altexp_names, ~ altexp_save(.x, altexp=altExp(sce, .x), path=path, rownames_strip_prefix=rownames_strip_prefix, rownames_prefix_sep=rownames_prefix_sep))
 
   ## Remove altExps from main object
   altExps(sce) <- NULL
 
   ### reducedDims ###
   reduceddim_names <- reducedDimNames(sce)
-  if(reduceddim_include != "all") reduceddim_names <- intersect(reduceddim_names, reduceddim_include)
+  if(!"all" %in% reduceddim_include) reduceddim_names <- intersect(reduceddim_names, reduceddim_include)
   reduceddim_names <- setdiff(reduceddim_names, reduceddim_exclude)
 
-  furrr::future_walk(reduceddim_names, ~ reduceddim_save(.x, reduceddim=reducedDim(sce, .x), path=path))
+  walk(reduceddim_names, ~ reduceddim_save(.x, reduceddim=reducedDim(sce, .x), path=path))
 
   ## Remove reducedDims from main object
   reducedDims(sce) <- NULL
@@ -48,7 +48,7 @@ multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName
   colData(sce) <- coldata_save(sce, path=path, coldata_column_prefix=main_prefix)
 
   ### metadata ###
-  metadata(sce) <- metadata_save(sce, path=path, metadata_include=metadata_include, metadata_exclude=metadata_exclude)
+  if(length(metadata(sce)) > 0) metadata_save(sce, path=path, metadata_include=metadata_include, metadata_exclude=metadata_exclude)
 
   ### Main SCE ###
   sce_save(sce, path=path, filename=main_name)
@@ -76,36 +76,19 @@ multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName
 #' @importFrom furrr future_map
 #' @importFrom S4Vectors metadata
 #' @export
-multisce_load <- function(path, main_name="RNA", main_prefix=paste0(main_name,"__"), coldata_include=TRUE, altexp_include=c(), altexp_exclude=c(), altexp_rownames_add_prefix=TRUE, altexp_rownames_prefix_sep="_", reduceddim_include="all", reduceddim_exclude=c(), metadata_include="all", metadata_exclude=c()){
+multisce_load <- function(path, main_name="RNA", main_prefix=paste0(main_name,"__"), coldata_include=TRUE, altexp_include=c(), altexp_exclude=c(), altexp_rownames_add_prefix=TRUE, altexp_rownames_prefix_sep="_", reduceddim_include="all", reduceddim_exclude=c(), metadata_include=c(), metadata_exclude=c()){
   sce <- sce_load(path, filename=main_name)
 
   ## To assure compatibility with saving functions, add main_name to sce
   mainExpName(sce) <- main_name
 
-  ### metadata ###
-  metadata(sce) <- append(metadata(sce), metadata_load(path=path, metadata_include=metadata_include, metadata_exclude=metadata_exclude))
-
-  ## Load path into object
-  multisce_path(sce) <- path
-
-  ### colData ###
-  if(coldata_include == TRUE) colData(sce) <- coldata_load(sce=sce, path=path, coldata_column_prefix=main_prefix)
-
-  ### altExps ###
-  if(length(altexp_include) > 0){
-    if(altexp_include == "all") altexp_include <- setdiff(sce_list(path), main_name)
-    altexp_include <- setdiff(altexp_include, altexp_exclude) %>% setNames(., .)
-
-    if(length(altexp_include) > 0) altExps(sce) <- furrr::future_map(altexp_include, altexp_load, path=path, rownames_add_prefix=altexp_rownames_add_prefix, rownames_prefix_sep=altexp_rownames_prefix_sep)
-  }
-
-  ### reducedDims ###
-  if(length(reduceddim_include) > 0){
-    if(reduceddim_include == "all") reduceddim_include <- reduceddim_list(path)
-    reduceddim_include <- setdiff(reduceddim_include, reduceddim_exclude) %>% setNames(., .)
-
-    if(length(reduceddim_include) > 0) reducedDims(sce) <- furrr::future_map(reduceddim_include, reduceddim_load, path=path)
-  }
+  sce <- multisce_add(sce, path=path,
+                      main_name=main_name, main_prefix=main_prefix,
+                      coldata_include=coldata_include,
+                      altexp_include=altexp_include, altexp_exclude=altexp_exclude,
+                      altexp_rownames_add_prefix=altexp_rownames_add_prefix, altexp_rownames_prefix_sep=altexp_rownames_prefix_sep,
+                      reduceddim_include=reduceddim_include, reduceddim_exclude=reduceddim_exclude,
+                      metadata_include=metadata_include, metadata_exclude=metadata_exclude)
 
   return(sce)
 }
@@ -126,11 +109,19 @@ multisce_load <- function(path, main_name="RNA", main_prefix=paste0(main_name,"_
 #' @param altexp_rownames_prefix_sep Separator used for pasting rownames prefix
 #' @param reduceddim_include  If "all", all reducedDims are loaded (unless specified in reduceddim_exclude). Otherwise, a vector of reducedDim names to be loaded
 #' @param reduceddim_exclude  Vector of reducedDim names to exclude from being loaded (most relevant if reduceddim_include = "all")
+#' @param metadata_include  If "all", all metadata entries are loaded (unless specified in metadata_exclude). Otherwise, a vector of metadata entry names to be loaded
+#' @param metadata_exclude  Vector of metadata entry names to exclude from being loaded
 #'
 #' @import SingleCellExperiment
 #' @importFrom furrr future_map
 #' @export
-multisce_add <- function(sce, path=multisce_path(sce), main_name=mainExpName(sce), main_prefix=paste0(main_name,"__"), coldata_include=FALSE, altexp_include=c(), altexp_exclude=c(), altexp_rownames_add_prefix=TRUE, altexp_rownames_prefix_sep="_", reduceddim_include=c(), reduceddim_exclude=c()){
+multisce_add <- function(sce, path=multisce_path(sce), main_name=mainExpName(sce), main_prefix=paste0(main_name,"__"), coldata_include=FALSE, altexp_include=c(), altexp_exclude=c(), altexp_rownames_add_prefix=TRUE, altexp_rownames_prefix_sep="_", reduceddim_include=c(), reduceddim_exclude=c(), metadata_include=c(), metadata_exclude=c()){
+
+  ### metadata ###
+  add_metadata <- metadata_load(path=path, metadata_include=metadata_include, metadata_exclude=metadata_exclude)
+  current_metadata <- metadata(sce)
+
+  metadata(sce) <- append(current_metadata[setdiff(names(current_metadata), names(add_metadata))], add_metadata)
 
   ## Load path into object
   multisce_path(sce) <- path
@@ -140,18 +131,20 @@ multisce_add <- function(sce, path=multisce_path(sce), main_name=mainExpName(sce
 
   ### altExps ###
   if(length(altexp_include) > 0){
-    if(altexp_include == "all") altexp_include <- setdiff(sce_list(path), c(main_name, altExpNames(sce)))
+    if("all" %in% altexp_include) altexp_include <- setdiff(sce_list(path), c(main_name, altExpNames(sce)))
     altexp_include <- setdiff(altexp_include, altexp_exclude) %>% setNames(., .)
 
-    altExps(sce) <- append(altExps(sce), furrr::future_map(altexp_include, altexp_load, path=path, rownames_add_prefix=altexp_rownames_add_prefix, rownames_prefix_sep=altexp_rownames_prefix_sep))
+    if(length(altexp_include) > 0) altExps(sce) <- furrr::future_map(altexp_include, altexp_load, path=path, rownames_add_prefix=altexp_rownames_add_prefix, rownames_prefix_sep=altexp_rownames_prefix_sep)
   }
 
   ### reducedDims ###
   if(length(reduceddim_include) > 0){
-    if(reduceddim_include == "all") reduceddim_include <- setdiff(reduceddim_list(path), reducedDimNames(sce))
+    if("all" %in% reduceddim_include) reduceddim_include <- setdiff(reduceddim_list(path), reducedDimNames(sce))
     reduceddim_include <- setdiff(reduceddim_include, reduceddim_exclude) %>% setNames(., .)
 
-    reducedDims(sce) <- append(reducedDims(sce), furrr::future_map(reduceddim_include, reduceddim_load, path=path))
+    if(length(reduceddim_include) > 0){
+      reducedDims(sce) <- map(reduceddim_include, reduceddim_load, path=path)
+    }
   }
 
   return(sce)

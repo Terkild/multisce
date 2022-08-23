@@ -6,7 +6,7 @@
 \usage{
 coldata_save(
   sce,
-  path,
+  path = multisce_path(sce),
   filename = "coldata",
   coldata_column_prefix = paste0(mainExpName(sce), "_")
 )

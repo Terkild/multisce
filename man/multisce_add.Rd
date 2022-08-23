@@ -15,7 +15,9 @@ multisce_add(
   altexp_rownames_add_prefix = TRUE,
   altexp_rownames_prefix_sep = "_",
   reduceddim_include = c(),
-  reduceddim_exclude = c()
+  reduceddim_exclude = c(),
+  metadata_include = c(),
+  metadata_exclude = c()
 )
 }
 \arguments{
@@ -40,6 +42,10 @@ multisce_add(
 \item{reduceddim_include}{If "all", all reducedDims are loaded (unless specified in reduceddim_exclude). Otherwise, a vector of reducedDim names to be loaded}
 
 \item{reduceddim_exclude}{Vector of reducedDim names to exclude from being loaded (most relevant if reduceddim_include = "all")}
+
+\item{metadata_include}{If "all", all metadata entries are loaded (unless specified in metadata_exclude). Otherwise, a vector of metadata entry names to be loaded}
+
+\item{metadata_exclude}{Vector of metadata entry names to exclude from being loaded}
 }
 \description{
 Adds colData, selected alternative experiments (altExp) or dimension reductions (reduceddim) from

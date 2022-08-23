@@ -4,7 +4,7 @@
 \alias{sce_save}
 \title{Save SingleCellExperiment}
 \usage{
-sce_save(sce, path, filename, folder = "sce")
+sce_save(sce, path = multisce_path(sce), filename, folder = "sce")
 }
 \arguments{
 \item{sce}{SingleCellExperiment object}

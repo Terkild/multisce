@@ -4,7 +4,9 @@
 #' @param path Path to multisce folder for the object
 #' @param filename Name of sce
 #' @param folder Subfolder within path where sce are located
-sce_save <- function(sce, path, filename, folder="sce"){
+#'
+#' @export
+sce_save <- function(sce, path=multisce_path(sce), filename, folder="sce"){
 
   multisce_individual_save(sce, path=file.path(path, folder), filename=filename)
 }
@@ -14,6 +16,8 @@ sce_save <- function(sce, path, filename, folder="sce"){
 #' @param path Path to multisce folder for the object
 #' @param filename Name of sce
 #' @param folder Subfolder within path where sce are located
+#'
+#' @export
 sce_load <- function(path, filename, folder="sce"){
 
   multisce_individual_load(path=file.path(path, folder), filename=filename)
