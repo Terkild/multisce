@@ -22,7 +22,7 @@ multisce_load(
 \arguments{
 \item{path}{Path to multisce folder for the object}
 
-\item{main_name}{Name of main experiment (defaults to mainExpName of sce)}
+\item{main_name}{Name of main experiment (defaults to mainExpName of sce). If NULL, an empty sce scaffold is used (fastest) - useful for plotting colData only.}
 
 \item{main_prefix}{Prefix for colData columns only associated with the main experiment (not loaded/saved with the remaining colData)}
 

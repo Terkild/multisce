@@ -12,12 +12,15 @@ multisce_add(
   coldata_include = FALSE,
   altexp_include = c(),
   altexp_exclude = c(),
+  altexp_clear = FALSE,
   altexp_rownames_add_prefix = TRUE,
   altexp_rownames_prefix_sep = "_",
   reduceddim_include = c(),
   reduceddim_exclude = c(),
+  reduceddim_clear = FALSE,
   metadata_include = c(),
-  metadata_exclude = c()
+  metadata_exclude = c(),
+  metadata_clear = FALSE
 )
 }
 \arguments{
@@ -35,6 +38,8 @@ multisce_add(
 
 \item{altexp_exclude}{Vector of altExp names to exclude from being loaded (most relevant if altexp_include = "all")}
 
+\item{altexp_clear}{Remove existing altExps before adding}
+
 \item{altexp_rownames_add_prefix}{Should rowname prefix (altExp name) be added after loading?}
 
 \item{altexp_rownames_prefix_sep}{Separator used for pasting rownames prefix}
@@ -43,9 +48,13 @@ multisce_add(
 
 \item{reduceddim_exclude}{Vector of reducedDim names to exclude from being loaded (most relevant if reduceddim_include = "all")}
 
+\item{reduceddim_clear}{Remove existing reducedDims before adding}
+
 \item{metadata_include}{If "all", all metadata entries are loaded (unless specified in metadata_exclude). Otherwise, a vector of metadata entry names to be loaded}
 
 \item{metadata_exclude}{Vector of metadata entry names to exclude from being loaded}
+
+\item{metadata_clear}{Remove existing metadata before adding}
 }
 \description{
 Adds colData, selected alternative experiments (altExp) or dimension reductions (reduceddim) from

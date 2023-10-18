@@ -54,7 +54,7 @@ metadata_save <- function(sce, path=multisce_path(sce), metadata_include="all", 
   if(length(metadata) >0){
     metadata_names <- names(metadata)
 
-    if("all" %in% metadata_include) metadata_names <- intersect(metadata_names, metadata_include)
+    if(("all" %in% metadata_include) == FALSE) metadata_names <- intersect(metadata_names, metadata_include)
 
     metadata_names <- setdiff(metadata_names, metadata_exclude)
 
