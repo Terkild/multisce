@@ -10,7 +10,7 @@
 #' @export
 reduceddim_save <- function(reducedDimName, reduceddim, path, folder="reducedDim", barcodes_file="barcodes.tsv", barcodes_overwrite=FALSE){
 
-  if(barcodes_exits(path=path, filename=barcodes_file) & barcodes_overwrite == FALSE){
+  if(barcodes_exists(path=path, filename=barcodes_file) & barcodes_overwrite == FALSE){
 
     # Check of SCE barcodes matches barcodes file
     if(barcodes_load(path=path, filename=barcodes_file) != rownames(reduceddim)){

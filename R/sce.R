@@ -10,7 +10,7 @@
 #' @export
 sce_save <- function(sce, path=multisce_path(sce), filename, folder="sce", barcodes_file="barcodes.tsv", barcodes_overwrite=FALSE){
 
-  if(barcodes_exits(path=path, filename=barcodes_file) & barcodes_overwrite == FALSE){
+  if(barcodes_exists(path=path, filename=barcodes_file) & barcodes_overwrite == FALSE){
     # Check of SCE barcodes matches barcodes file
     if(!barcodes_check(sce, path=path, bc_filename=barcodes_file)){
       stop(paste("Barcodes of SCE (",filename,") does not match saved barcodes file - set barcode_overwrite=TRUE to ignore this (Obs. this may break associations with other linked objects)"))
