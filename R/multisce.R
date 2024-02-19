@@ -6,6 +6,9 @@
 #' @param sce SingleCellExperiment object
 #' @param path Path to multisce folder for the object
 #' @param main_name  Name of main experiment (defaults to mainExpName of sce)
+#' @param barcodes Boolean if barcodes should be saved as individual file
+#' @param barcodes_file Name of file to save barcodes (default: barcodes.tsv)
+#' @param barcodes_overwrite Should barcodes file be overwritten if existing - may break colname relationship to objects not currently loaded in the multisce
 #' @param altexp_include  If "all", all altExps are saved (unless specified in altexp_exclude). Otherwise, a vector of altExp names to be saved
 #' @param altexp_exclude  Vector of altExp names to exclude from being saved
 #' @param rownames_strip_prefix Should rowname prefix (altExp name) be stripped before saving?
@@ -20,7 +23,24 @@
 #' @importFrom purrr walk
 #' @importFrom S4Vectors metadata
 #' @export
-multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName(sce), altexp_include="all", altexp_exclude=c(), reduceddim_include="all", reduceddim_exclude=c(), rownames_strip_prefix=TRUE, rownames_prefix_sep="_", main_prefix=paste0(main_name,"__"), metadata_include="all", metadata_exclude=c("multisce_path")){
+multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName(sce), barcodes=TRUE, barcodes_file="barcodes.tsv", barcodes_overwrite=FALSE, altexp_include="all", altexp_exclude=c(), reduceddim_include="all", reduceddim_exclude=c(), rownames_strip_prefix=TRUE, rownames_prefix_sep="_", main_prefix=paste0(main_name,"__"), metadata_include="all", metadata_exclude=c("multisce_path")){
+
+  if(barcodes_exits(path=path, filename=barcodes_file) & barcodes_overwrite == FALSE){
+
+    # Check of SCE barcodes matches barcodes file
+    if(!barcodes_check(sce, path=path, bc_filename=barcodes_file)){
+      stop("Barcodes of SCE does not match saved barcodes file - set barcode_overwrite=TRUE to ignore this (Obs. this may break associations with other linked objects)")
+    }
+
+    barcodes_vector <- barcodes_load(path=path, filename=barcodes_file)
+  } else {
+    barcodes_vector <- colnames(sce)
+  }
+
+  # Write barcodes file
+  if(barcodes == TRUE){
+    barcodes_save(sce, path=path, filename=barcodes_file, overwrite=barcodes_overwrite)
+  }
 
   ### altExp ###
   ## Save altExps individually
@@ -28,7 +48,7 @@ multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName
   if(!"all" %in% altexp_include) altexp_names <- intersect(altexp_names, altexp_include)
   altexp_names <- setdiff(altexp_names, altexp_exclude)
 
-  walk(altexp_names, ~ altexp_save(.x, altexp=altExp(sce, .x), path=path, rownames_strip_prefix=rownames_strip_prefix, rownames_prefix_sep=rownames_prefix_sep))
+  walk(altexp_names, ~ altexp_save(.x, altexp=altExp(sce, .x), path=path, rownames_strip_prefix=rownames_strip_prefix, rownames_prefix_sep=rownames_prefix_sep, barcodes_file=barcodes_file, barcodes_overwrite=barcodes_overwrite))
 
   ## Remove altExps from main object
   altExps(sce) <- NULL
@@ -38,20 +58,20 @@ multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName
   if(!"all" %in% reduceddim_include) reduceddim_names <- intersect(reduceddim_names, reduceddim_include)
   reduceddim_names <- setdiff(reduceddim_names, reduceddim_exclude)
 
-  walk(reduceddim_names, ~ reduceddim_save(.x, reduceddim=reducedDim(sce, .x), path=path))
+  walk(reduceddim_names, ~ reduceddim_save(.x, reduceddim=reducedDim(sce, .x), path=path), barcodes_file=barcodes_file, barcodes_overwrite=barcodes_overwrite)
 
   ## Remove reducedDims from main object
   reducedDims(sce) <- NULL
 
   ### colData ###
   ## Save colData
-  colData(sce) <- coldata_save(sce, path=path, coldata_column_prefix=main_prefix)
+  colData(sce) <- coldata_save(sce, path=path, coldata_column_prefix=main_prefix, barcodes_file=barcodes_file, barcodes_overwrite=barcodes_overwrite)
 
   ### metadata ###
   if(length(metadata(sce)) > 0) metadata_save(sce, path=path, metadata_include=metadata_include, metadata_exclude=metadata_exclude)
 
   ### Main SCE ###
-  if(!is.null(main_name)) sce_save(sce, path=path, filename=main_name)
+  if(!is.null(main_name)) sce_save(sce, path=path, filename=main_name, barcodes_file=barcodes_file, barcodes_overwrite=barcodes_overwrite)
 }
 
 #' Load SCE and conneced altExp into multisce folder

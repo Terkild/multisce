@@ -4,9 +4,18 @@
 #' @param path Path to multisce folder for the object
 #' @param filename Name of sce
 #' @param folder Subfolder within path where sce are located
+#' @param barcodes_file Name of file to save barcodes (default: barcodes.tsv)
+#' @param barcodes_overwrite Should barcodes file be overwritten if existing - may break colname relationship to objects not currently loaded in the multisce
 #'
 #' @export
-sce_save <- function(sce, path=multisce_path(sce), filename, folder="sce"){
+sce_save <- function(sce, path=multisce_path(sce), filename, folder="sce", barcodes_file="barcodes.tsv", barcodes_overwrite=FALSE){
+
+  if(barcodes_exits(path=path, filename=barcodes_file) & barcodes_overwrite == FALSE){
+    # Check of SCE barcodes matches barcodes file
+    if(!barcodes_check(sce, path=path, bc_filename=barcodes_file)){
+      stop(paste("Barcodes of SCE (",filename,") does not match saved barcodes file - set barcode_overwrite=TRUE to ignore this (Obs. this may break associations with other linked objects)"))
+    }
+  }
 
   multisce_individual_save(sce, path=file.path(path, folder), filename=filename)
 }
@@ -46,12 +55,12 @@ sce_list <- function(path, folder="sce", extension=".rds"){
 #'
 #' @importFrom SingleCellExperiment altExp
 #' @export
-altexp_save <- function(altExpName, altexp, path, rownames_strip_prefix=TRUE, rownames_prefix_sep="_"){
+altexp_save <- function(altExpName, altexp, path, rownames_strip_prefix=TRUE, rownames_prefix_sep="_", ...){
 
   ## Remove rowname prefix if required
   if(rownames_strip_prefix == TRUE) rownames(altexp) <- gsub(paste0("^",altExpName,rownames_prefix_sep),"", rownames(altexp))
 
-  sce_save(altexp, path=path, filename=altExpName)
+  sce_save(altexp, path=path, filename=altExpName, ...)
 }
 
 #' Load individual altExp

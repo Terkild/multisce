@@ -6,14 +6,24 @@
 #' @param path Path to multisce folder for the object
 #' @param filename Name of resulting rds file
 #' @param coldata_column_prefix Column names with this prefix are omitted when saving but included in the returned DataFrame
+#' @param barcodes_file Name of file to save barcodes (default: barcodes.tsv)
+#' @param barcodes_overwrite Should barcodes file be overwritten if existing - may break colname relationship to objects not currently loaded in the multisce
 #'
 #' @return DataFrame containing only the columns with the indicated prefix
 #'
 #' @importFrom SingleCellExperiment colData mainExpName
 #' @export
-coldata_save <- function(sce, path=multisce_path(sce), filename="coldata", coldata_column_prefix=paste0(mainExpName(sce),"_")){
+coldata_save <- function(sce, path=multisce_path(sce), filename="coldata", coldata_column_prefix=paste0(mainExpName(sce),"_"), barcodes_file="barcodes.tsv", barcodes_overwrite=FALSE){
   df <- colData(sce)
   columns_skip <- grepl(paste0("^", coldata_column_prefix), colnames(df))
+
+  if(barcodes_exits(path=path, filename=barcodes_file) & barcodes_overwrite == FALSE){
+
+    # Check of SCE barcodes matches barcodes file
+    if(barcodes_check(sce, path=path, bc_filename=barcodes_file)){
+      stop(paste("Barcodes of colData does not match saved barcodes file - set barcode_overwrite=TRUE to ignore this (Obs. this may break associations with other linked objects)"))
+    }
+  }
 
   multisce_individual_save(object=df[,columns_skip == FALSE], path=path, filename=filename)
 

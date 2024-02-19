@@ -8,6 +8,9 @@ multisce_save(
   sce,
   path,
   main_name = SingleCellExperiment::mainExpName(sce),
+  barcodes = TRUE,
+  barcodes_file = "barcodes.tsv",
+  barcodes_overwrite = FALSE,
   altexp_include = "all",
   altexp_exclude = c(),
   reduceddim_include = "all",
@@ -25,6 +28,12 @@ multisce_save(
 \item{path}{Path to multisce folder for the object}
 
 \item{main_name}{Name of main experiment (defaults to mainExpName of sce)}
+
+\item{barcodes}{Boolean if barcodes should be saved as individual file}
+
+\item{barcodes_file}{Name of file to save barcodes (default: barcodes.tsv)}
+
+\item{barcodes_overwrite}{Should barcodes file be overwritten if existing - may break colname relationship to objects not currently loaded in the multisce}
 
 \item{altexp_include}{If "all", all altExps are saved (unless specified in altexp_exclude). Otherwise, a vector of altExp names to be saved}
 

@@ -9,7 +9,8 @@ altexp_save(
   altexp,
   path,
   rownames_strip_prefix = TRUE,
-  rownames_prefix_sep = "_"
+  rownames_prefix_sep = "_",
+  ...
 )
 }
 \arguments{

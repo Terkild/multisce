@@ -8,7 +8,9 @@ coldata_save(
   sce,
   path = multisce_path(sce),
   filename = "coldata",
-  coldata_column_prefix = paste0(mainExpName(sce), "_")
+  coldata_column_prefix = paste0(mainExpName(sce), "_"),
+  barcodes_file = "barcodes.tsv",
+  barcodes_overwrite = FALSE
 )
 }
 \arguments{
@@ -19,6 +21,10 @@ coldata_save(
 \item{filename}{Name of resulting rds file}
 
 \item{coldata_column_prefix}{Column names with this prefix are omitted when saving but included in the returned DataFrame}
+
+\item{barcodes_file}{Name of file to save barcodes (default: barcodes.tsv)}
+
+\item{barcodes_overwrite}{Should barcodes file be overwritten if existing - may break colname relationship to objects not currently loaded in the multisce}
 }
 \value{
 DataFrame containing only the columns with the indicated prefix

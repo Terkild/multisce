@@ -4,7 +4,14 @@
 \alias{reduceddim_save}
 \title{Save individual reducedDim}
 \usage{
-reduceddim_save(reducedDimName, reduceddim, path, folder = "reducedDim")
+reduceddim_save(
+  reducedDimName,
+  reduceddim,
+  path,
+  folder = "reducedDim",
+  barcodes_file = "barcodes.tsv",
+  barcodes_overwrite = FALSE
+)
 }
 \arguments{
 \item{reducedDimName}{Name of reducedDim to be saved}
@@ -14,6 +21,10 @@ reduceddim_save(reducedDimName, reduceddim, path, folder = "reducedDim")
 \item{path}{Path to multisce folder for the object}
 
 \item{folder}{Subfolder to use for reducedDim objects}
+
+\item{barcodes_file}{Name of file to save barcodes (default: barcodes.tsv)}
+
+\item{barcodes_overwrite}{Should barcodes file be overwritten if existing - may break colname relationship to objects not currently loaded in the multisce}
 }
 \description{
 Save individual reducedDim

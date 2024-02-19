@@ -4,7 +4,14 @@
 \alias{sce_save}
 \title{Save SingleCellExperiment}
 \usage{
-sce_save(sce, path = multisce_path(sce), filename, folder = "sce")
+sce_save(
+  sce,
+  path = multisce_path(sce),
+  filename,
+  folder = "sce",
+  barcodes_file = "barcodes.tsv",
+  barcodes_overwrite = FALSE
+)
 }
 \arguments{
 \item{sce}{SingleCellExperiment object}
@@ -14,6 +21,10 @@ sce_save(sce, path = multisce_path(sce), filename, folder = "sce")
 \item{filename}{Name of sce}
 
 \item{folder}{Subfolder within path where sce are located}
+
+\item{barcodes_file}{Name of file to save barcodes (default: barcodes.tsv)}
+
+\item{barcodes_overwrite}{Should barcodes file be overwritten if existing - may break colname relationship to objects not currently loaded in the multisce}
 }
 \description{
 Save SingleCellExperiment

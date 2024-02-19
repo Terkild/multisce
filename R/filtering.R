@@ -7,7 +7,6 @@
 #' @param barcode_match Regexp expression to use on barcodes before matching
 #' @param debug Debug mode (will print relevant info during filtering)
 #'
-#' @return
 #' @export
 filter_by_coldata <- function(path, filename="coldata", barcode_match="^(.*)$", debug=FALSE){
   coldata <- coldata_load(path=path, filename=filename)
