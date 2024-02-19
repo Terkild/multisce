@@ -17,7 +17,7 @@ coldata_save <- function(sce, path=multisce_path(sce), filename="coldata", colda
   df <- colData(sce)
   columns_skip <- grepl(paste0("^", coldata_column_prefix), colnames(df))
 
-  if(barcodes_exists(path=path, filename=barcodes_file) & barcodes_overwrite == FALSE){
+  if(barcodes_exists(path=path, filename=barcodes_file) && barcodes_overwrite == FALSE){
 
     # Check of SCE barcodes matches barcodes file
     if(barcodes_check(sce, path=path, bc_filename=barcodes_file)){

@@ -25,7 +25,7 @@
 #' @export
 multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName(sce), barcodes=TRUE, barcodes_file="barcodes.tsv", barcodes_overwrite=FALSE, altexp_include="all", altexp_exclude=c(), reduceddim_include="all", reduceddim_exclude=c(), rownames_strip_prefix=TRUE, rownames_prefix_sep="_", main_prefix=paste0(main_name,"__"), metadata_include="all", metadata_exclude=c("multisce_path")){
 
-  if(barcodes_exists(path=path, filename=barcodes_file) & barcodes_overwrite == FALSE){
+  if(barcodes_exists(path=path, filename=barcodes_file) && barcodes_overwrite == FALSE){
 
     # Check of SCE barcodes matches barcodes file
     if(!barcodes_check(sce, path=path, bc_filename=barcodes_file)){
