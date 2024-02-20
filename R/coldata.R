@@ -20,12 +20,12 @@ coldata_save <- function(sce, path=multisce_path(sce), filename="coldata", colda
   if(barcodes_exists(path=path, filename=barcodes_file) && barcodes_overwrite == FALSE){
 
     # Check of SCE barcodes matches barcodes file
-    if(barcodes_check(sce, path=path, bc_filename=barcodes_file)){
+    if(barcodes_check(sce, path=path, bc_filename=barcodes_file) == FALSE){
       stop(paste("Barcodes of colData does not match saved barcodes file - set barcode_overwrite=TRUE to ignore this (Obs. this may break associations with other linked objects)"))
     }
   }
 
-  multisce_individual_save(object=df[,columns_skip == FALSE], path=path, filename=filename)
+  multisce_individual_save(object=df[, columns_skip == FALSE], path=path, filename=filename)
 
   return(df[, columns_skip])
 }
