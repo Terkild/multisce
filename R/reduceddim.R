@@ -13,7 +13,7 @@ reduceddim_save <- function(reducedDimName, reduceddim, path, folder="reducedDim
   if(barcodes_exists(path=path, filename=barcodes_file) && barcodes_overwrite == FALSE){
 
     # Check of SCE barcodes matches barcodes file
-    if(barcodes_load(path=path, filename=barcodes_file) != rownames(reduceddim)){
+    if(!identical(barcodes_load(path=path, filename=barcodes_file), rownames(reduceddim))){
       stop(paste("Barcodes of ReducedDim (",reducedDimName,") does not match saved barcodes file - set barcode_overwrite=TRUE to ignore this (Obs. this may break associations with other linked objects)"))
     }
   }
