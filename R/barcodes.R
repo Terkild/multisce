@@ -36,7 +36,7 @@ barcodes_save <- function(sce, path=multisce_path(sce), filename="barcodes.tsv",
 barcodes_load <- function(path, filename="barcodes.tsv", missing_ignore=FALSE){
   file_bc <- file.path(path, filename)
 
-  if(barcodes_exists(file_bc)){
+  if(barcodes_exists(path=path, filename=filename) == TRUE){
 
     barcodes <- read.table(file=file_bc, header=FALSE, sep="\t")[[1]]
 
@@ -81,7 +81,7 @@ barcodes_exists <- function(path, filename="barcodes.tsv"){
 barcodes_check <- function(sce, path=multisce_path(sce), bc_filename="barcodes.tsv"){
   bc <- barcodes_load(path=path, filename=bc_filename)
 
-  if(colnames(sce) == bc){
+  if(identical(colnames(sce), bc) == TRUE){
     return(TRUE)
   } else {
     return(FALSE)
