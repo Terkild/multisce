@@ -4,14 +4,18 @@
 \alias{multisce_individual_load}
 \title{Load file}
 \usage{
-multisce_individual_load(path, filename, extension = ".rds")
+multisce_individual_load(
+  path,
+  filename,
+  extensions = c(".rds", ".tsv.gz", ".tsv")
+)
 }
 \arguments{
 \item{path}{Path to multisce folder}
 
 \item{filename}{Filename without extension}
 
-\item{extension}{Filename extension}
+\item{extensions}{Filename extensions to loop through to find the file (.rds, .tsv and .tsv.gz is currently supported)}
 }
 \description{
 For loading the separate parts of the multisce in the saved format (currently RDS)

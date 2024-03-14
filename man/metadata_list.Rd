@@ -4,7 +4,7 @@
 \alias{metadata_list}
 \title{List available metadata entries}
 \usage{
-metadata_list(path, folder = "metadata", extension = ".rds")
+metadata_list(path, folder = "metadata", extension = ".rds|.tsv")
 }
 \arguments{
 \item{path}{Path to multisce folder for the object}

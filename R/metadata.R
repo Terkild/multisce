@@ -7,7 +7,10 @@
 #'
 #' @export
 metadata_entry_save <- function(entry_name, entry, path, folder="metadata"){
-  if(!is.na(entry_name) & length(entry)>0)  multisce_individual_save(entry, path=file.path(path, folder), filename=entry_name)
+
+  extension <- ifelse("data.frame" %in% class(entry), ".tsv.gz", ".rds")
+
+  if(!is.na(entry_name) & length(entry)>0)  multisce_individual_save(entry, path=file.path(path, folder), filename=entry_name, extension=extension)
 }
 
 #' Load individual metadata entries
@@ -31,7 +34,7 @@ metadata_entry_load <- function(entry_name, path, folder="metadata"){
 #' @param folder Subfolder to use for metadata objects
 #'
 #' @export
-metadata_list <- function(path, folder="metadata", extension=".rds"){
+metadata_list <- function(path, folder="metadata", extension=".rds|.tsv"){
 
   metadata_names <- gsub(paste0(extension,"$"),"", list.files(path=file.path(path, folder), pattern=extension, full.names=FALSE))
   return(metadata_names)

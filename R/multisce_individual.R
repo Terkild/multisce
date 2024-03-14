@@ -6,6 +6,7 @@
 #' @param path  Path to multisce folder
 #' @param filename  Filename without extension
 #' @param extension Filename extension
+#' @importFrom data.table fwrite
 #'
 multisce_individual_save <- function(object, path, filename, extension=".rds"){
 
@@ -17,7 +18,20 @@ multisce_individual_save <- function(object, path, filename, extension=".rds"){
   }
 
   message(paste("Saving",filename,"to",file_path))
-  saveRDS(object, file=file_path)
+
+  if(extension == ".rds"){
+
+    saveRDS(object, file=file_path)
+
+  } else if(extension %in% c(".tsv.gz", ".tsv")) {
+
+    data.table::fwrite(object, file=file_path, sep="\t")
+
+  } else {
+
+    stop(paste0("Extension ", extension, " is not supported"))
+
+  }
 }
 #' Load file
 #'
@@ -25,12 +39,23 @@ multisce_individual_save <- function(object, path, filename, extension=".rds"){
 #'
 #' @param path  Path to multisce folder
 #' @param filename  Filename without extension
-#' @param extension Filename extension
+#' @param extensions Filename extensions to loop through to find the file (.rds, .tsv and .tsv.gz is currently supported)
+#' @importFrom data.table fread
 #'
-multisce_individual_load <- function(path, filename, extension=".rds"){
+multisce_individual_load <- function(path, filename, extensions=c(".rds", ".tsv.gz", ".tsv")){
 
-  file_path <- file.path(path, paste0(filename, extension))
+  for(i in seq_along(extensions)){
+    extension <- extensions[i]
+    file_path <- file.path(path, paste0(filename, extension))
 
-  message(paste("Loading",filename,"from",file_path))
-  return(readRDS(file=file_path))
+    if(file.exists(file_path)){
+      message(paste("Loading",filename,"from",file_path))
+
+      if(extension == ".rds") return(readRDS(file=file_path))
+      if(extension %in% c(".tsv.gz", ".tsv")) return(data.table::fread(file=file_path))
+    }
+  }
+  stop(paste0("File ", filename, "could not be found in ", path, ". Make sure it is in a supported format."))
+
+  return(NULL)
 }
