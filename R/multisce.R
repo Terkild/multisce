@@ -164,6 +164,13 @@ multisce_add <- function(sce, path=multisce_path(sce), main_name=mainExpName(sce
   }
 
   ### metadata ###
+  metadata_available <- metadata_list(path)
+  metadata_missing <- setdiff(metadata_include, metadata_available)
+  if(length(metadata_missing) > 0){
+    warning(paste0("Metadata entries: ", paste(metadata_missing, collapse=", "), " are not available."))
+    metadata_include <- intersect(metadata_include, metadata_available)
+  }
+
   add_metadata <- metadata_load(path=path, metadata_include=metadata_include, metadata_exclude=metadata_exclude)
   current_metadata <- metadata(sce)
 
@@ -177,20 +184,32 @@ multisce_add <- function(sce, path=multisce_path(sce), main_name=mainExpName(sce
   multisce_path(sce) <- path
 
   ### altExps ###
+
   if(length(altexp_include) > 0){
+
     if("all" %in% altexp_include) altexp_include <- setdiff(sce_list(path), c(main_name, altExpNames(sce)))
     altexp_include <- setdiff(altexp_include, altexp_exclude) %>% setNames(., .)
 
+    sce_available <- sce_list(path)
+    altexp_missing <- setdiff(altexp_include, sce_available)
+
+    if(length(altexp_missing) > 0){
+      warning(paste0("altExp entries: ", paste(altexp_missing, collapse=", "), " are not available."))
+      altexp_include <- intersect(altexp_include, sce_available) %>% setNames(., .)
+    }
+
     # If existing altexps should not be included, remove them before adding
 
-    if(length(altexp_include) > 0) altexp_add <- lapply(altexp_include %>% setNames(.,.),
-                                                                   altexp_load, path=path,
-                                                                   rownames_add_prefix=altexp_rownames_add_prefix, rownames_prefix_sep=altexp_rownames_prefix_sep)
+    if(length(altexp_include) > 0){
+      altexp_add <- lapply(altexp_include %>% setNames(.,.),
+                           altexp_load, path=path,
+                           rownames_add_prefix=altexp_rownames_add_prefix, rownames_prefix_sep=altexp_rownames_prefix_sep)
 
-    if(altexp_clear==TRUE | length(altExpNames(sce))<1){
-      altExps(sce) <- altexp_add
-    } else {
-      altExps(sce) %<>% append(altexp_add)
+      if(altexp_clear==TRUE | length(altExpNames(sce))<1){
+        altExps(sce) <- altexp_add
+      } else {
+        altExps(sce) %<>% append(altexp_add)
+      }
     }
 
   }
@@ -199,6 +218,14 @@ multisce_add <- function(sce, path=multisce_path(sce), main_name=mainExpName(sce
   if(length(reduceddim_include) > 0){
     if("all" %in% reduceddim_include) reduceddim_include <- setdiff(reduceddim_list(path), reducedDimNames(sce))
     reduceddim_include <- setdiff(reduceddim_include, reduceddim_exclude) %>% setNames(., .)
+
+    reduceddim_available <- reduceddim_list(path)
+    reduceddim_missing <- setdiff(reduceddim_include, reduceddim_available)
+    if(length(reduceddim_missing) > 0){
+      warning(paste0("reducedDim entries: ", paste(reduceddim_missing, collapse=", "), " are not available."))
+      reduceddim_include <- intersect(reduceddim_include, reduceddim_available) %>% setNames(., .)
+    }
+
 
     if(length(reduceddim_include) > 0){
       reducedDim_add <- lapply(reduceddim_include, reduceddim_load, path=path)

@@ -52,10 +52,11 @@ multisce_individual_load <- function(path, filename, extensions=c(".rds", ".tsv.
       message(paste("Loading",filename,"from",file_path))
 
       if(extension == ".rds") return(readRDS(file=file_path))
+
       if(extension %in% c(".tsv.gz", ".tsv")) return(data.table::fread(file=file_path))
     }
   }
-  stop(paste0("File ", filename, "could not be found in ", path, ". Make sure it is in a supported format."))
+  stop(paste0("File '", filename, "' could not be found in ", path, ". Make sure it is in a supported format (",paste(extensions, collapse=", "),")."))
 
   return(NULL)
 }
