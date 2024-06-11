@@ -34,7 +34,7 @@ metadata_entry_load <- function(entry_name, path, folder="metadata"){
 #' @param folder Subfolder to use for metadata objects
 #'
 #' @export
-metadata_list <- function(path, folder="metadata", extension=".rds|.tsv"){
+metadata_list <- function(path, folder="metadata", extension=".rds|.tsv|.tsv.gz"){
 
   metadata_names <- gsub(paste0(extension,"$"),"", list.files(path=file.path(path, folder), pattern=extension, full.names=FALSE))
   return(metadata_names)
