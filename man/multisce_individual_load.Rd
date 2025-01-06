@@ -7,7 +7,7 @@
 multisce_individual_load(
   path,
   filename,
-  extensions = c(".rds", ".tsv.gz", ".tsv")
+  extensions = c(".h5", ".rds", ".tsv.gz", ".tsv")
 )
 }
 \arguments{

@@ -7,6 +7,7 @@
 #' @param filename  Filename without extension
 #' @param extension Filename extension
 #' @importFrom data.table fwrite
+#' @importFrom HDF5Array saveHDF5SummarizedExperiment
 #'
 multisce_individual_save <- function(object, path, filename, extension=".rds"){
 
@@ -19,7 +20,11 @@ multisce_individual_save <- function(object, path, filename, extension=".rds"){
 
   message(paste("Saving",filename,"to",file_path))
 
-  if(extension == ".rds"){
+  if(extension == ".h5"){
+
+    saveHDF5SummarizedExperiment(object, dir=file.path(path, filename))
+
+  } else if(extension == ".rds"){
 
     saveRDS(object, file=file_path)
 
@@ -41,15 +46,19 @@ multisce_individual_save <- function(object, path, filename, extension=".rds"){
 #' @param filename  Filename without extension
 #' @param extensions Filename extensions to loop through to find the file (.rds, .tsv and .tsv.gz is currently supported)
 #' @importFrom data.table fread
+#' @importFrom HDF5Array loadHDF5SummarizedExperiment
 #'
-multisce_individual_load <- function(path, filename, extensions=c(".rds", ".tsv.gz", ".tsv")){
+multisce_individual_load <- function(path, filename, extensions=c(".h5", ".rds", ".tsv.gz", ".tsv")){
 
   for(i in seq_along(extensions)){
     extension <- extensions[i]
     file_path <- file.path(path, paste0(filename, extension))
+    folder_path <- file.path(path, filename)
 
-    if(file.exists(file_path)){
+    if(file.exists(file_path) | dir.exists(folder_path)){
       message(paste("Loading",filename,"from",file_path))
+
+      if(extension == ".h5") return(loadHDF5SummarizedExperiment(dir=folder_path))
 
       if(extension == ".rds") return(readRDS(file=file_path))
 

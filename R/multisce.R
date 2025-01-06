@@ -37,11 +37,6 @@ multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName
     barcodes_vector <- colnames(sce)
   }
 
-  # Write barcodes file
-  if(barcodes == TRUE){
-    barcodes_save(sce, path=path, filename=barcodes_file, overwrite=barcodes_overwrite)
-  }
-
   ### altExp ###
   ## Save altExps individually
   altexp_names <- altExpNames(sce)
@@ -72,6 +67,11 @@ multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName
 
   ### Main SCE ###
   if(!is.null(main_name)) sce_save(sce, path=path, filename=main_name, barcodes_file=barcodes_file, barcodes_overwrite=barcodes_overwrite)
+
+  # Write barcodes file
+  if(barcodes == TRUE){
+    barcodes_save(sce, path=path, filename=barcodes_file, overwrite=barcodes_overwrite)
+  }
 }
 
 #' Load SCE and conneced altExp into multisce folder
