@@ -60,7 +60,7 @@ multisce_save <- function(sce, path, main_name=SingleCellExperiment::mainExpName
 
   ### colData ###
   ## Save colData
-  colData(sce) <- coldata_save(sce, path=path, coldata_column_prefix=main_prefix, barcodes_file=barcodes_file, barcodes_overwrite=barcodes_overwrite)
+  coldata_save(sce, path=path, coldata_column_prefix=main_prefix, barcodes_file=barcodes_file, barcodes_overwrite=barcodes_overwrite)
 
   ### metadata ###
   if(length(metadata(sce)) > 0) metadata_save(sce, path=path, metadata_include=metadata_include, metadata_exclude=metadata_exclude)

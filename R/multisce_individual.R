@@ -44,7 +44,7 @@ multisce_individual_save <- function(object, path, filename, extension=".rds"){
 #'
 #' @param path  Path to multisce folder
 #' @param filename  Filename without extension
-#' @param extensions Filename extensions to loop through to find the file (.rds, .tsv and .tsv.gz is currently supported)
+#' @param extensions Filename extensions to loop through to find the file (.h5 [HDF5SummarizedExperiment], .rds, .tsv and .tsv.gz is currently supported)
 #' @importFrom data.table fread
 #' @importFrom HDF5Array loadHDF5SummarizedExperiment
 #'
